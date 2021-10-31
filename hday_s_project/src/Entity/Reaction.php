@@ -34,6 +34,17 @@ class Reaction
      */
     private $updateAt;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="reactions")
+     */
+    private $User;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Article::class, inversedBy="reactions")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $Article;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -71,6 +82,30 @@ class Reaction
     public function setUpdateAt(?\DateTimeImmutable $updateAt): self
     {
         $this->updateAt = $updateAt;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->User;
+    }
+
+    public function setUser(?User $User): self
+    {
+        $this->User = $User;
+
+        return $this;
+    }
+
+    public function getArticle(): ?Article
+    {
+        return $this->Article;
+    }
+
+    public function setArticle(?Article $Article): self
+    {
+        $this->Article = $Article;
 
         return $this;
     }

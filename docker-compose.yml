@@ -57,3 +57,28 @@ services:
         depends_on:
           - maildev
           - mysql
+    
+    nginx:
+      container_name: angular_nginx
+      build: .docker/nginx
+      volumes:
+        - ${ANGULAR_APP}/dist/Angular-project:/usr/share/nginx/html
+      ports:
+        - "81:80"
+        - "443:443"
+      
+    node:
+        build: .docker/node
+        container_name: angular_node
+        ports:
+            - "4200:4200"
+        volumes:
+            - ${ANGULAR_APP}:/home/node/app/frontend
+        tty: true
+        command:
+            - /bin/sh
+            - -c
+            - |
+                cd /home/node/app/frontend && npm start
+        expose:
+            - "4200"

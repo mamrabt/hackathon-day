@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\TagRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -33,6 +35,16 @@ class Tag
      * @ORM\Column(type="datetime_immutable", nullable=true)
      */
     private $updateAt;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=Article::class, inversedBy="tags")
+     */
+    private $Article;
+
+    public function __construct()
+    {
+        $this->Article = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -71,6 +83,30 @@ class Tag
     public function setUpdateAt(?\DateTimeImmutable $updateAt): self
     {
         $this->updateAt = $updateAt;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Article[]
+     */
+    public function getArticle(): Collection
+    {
+        return $this->Article;
+    }
+
+    public function addArticle(Article $article): self
+    {
+        if (!$this->Article->contains($article)) {
+            $this->Article[] = $article;
+        }
+
+        return $this;
+    }
+
+    public function removeArticle(Article $article): self
+    {
+        $this->Article->removeElement($article);
 
         return $this;
     }
