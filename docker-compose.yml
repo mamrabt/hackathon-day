@@ -1,0 +1,59 @@
+# Run docker-compose build
+# Run docker-compose up
+# Live long and prosper
+
+version: '2.0'
+services:
+
+    apache:
+        build: .docker/apache
+        container_name: hday_apache
+        ports:
+          - 82:80
+        volumes:
+          - .docker/config/vhosts:/etc/apache2/sites-enabled
+          - ${SYMFONY_APP}:/home/wwwroot/hday
+        depends_on:
+          - php
+
+    db:
+        image: mysql:5.7
+        container_name: hday_mysql
+        volumes:
+            - .docker/data/db:/var/lib/mysql
+        ports:
+          - 3306:3306
+        environment:
+            MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+            MYSQL_DATABASE: ${MYSQL_DATABASE}
+            MYSQL_USER: ${MYSQL_USER}
+            MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    
+
+    phpmyadmin:
+        image: phpmyadmin/phpmyadmin
+        container_name: hday_phpmyadmin
+        restart: always
+        ports:
+            - 8080:80
+        links:
+            - db
+        environment:
+          PMA_HOST: db
+
+    maildev:
+        image: maildev/maildev
+        container_name: hday_maildev
+        ports:
+          - 8001:80
+    
+    php:
+        build: .docker/php
+        container_name: hday_php
+        volumes:
+          - ${SYMFONY_APP}:/home/wwwroot/hday
+        environment:
+          - maildev_host=hday_maildev
+        depends_on:
+          - maildev
+          - mysql
