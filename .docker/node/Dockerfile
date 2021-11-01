@@ -1,4 +1,4 @@
-FROM node:9.6.1
+FROM node:16.13.0
 
 USER node
 
@@ -16,4 +16,4 @@ RUN npm install --save-dev -g @angular/cli && npm cache clean --force
 
 EXPOSE 4200
 
-CMD [ "node" ]
+CMD ["ng","serve","--host", "0.0.0.0", "--disable-host-check"]
